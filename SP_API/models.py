@@ -36,10 +36,39 @@ class Pesquisa(models.Model):
     numero_CAAE = models.IntegerField('Numero da Plataforma Brasil', default='123')
     patrocinadores = models.CharField('Patrocinadores da Pesquisa', max_length=30, default='Exemplo')
     setor_de_atuacao = models.CharField('Setor de atuação da Pesquisa', max_length=30, default='Exemplo')
-    investigador = models.ForeignKey(InvestigadorPrincipal, on_delete=models.CASCADE, null=True)
+    investigador = models.ForeignKey(InvestigadorPrincipal, on_delete=models.SET_NULL, null=True)
     status = models.CharField('Status da Pesquisa', max_length=2, default='EA', choices=STATUS_POSSIVEIS)
-    equipe_de_apoio = models.ForeignKey(EquipeDeApoio, on_delete=models.CASCADE, null=True)
+    equipe_de_apoio = models.ForeignKey(EquipeDeApoio, on_delete=models.SET_NULL, null=True)
     vinculo_institucional = models.CharField(
         'Vínculo Institucional da Pesquisa', max_length=2, choices=TIPOS_DE_VINCULO, default='PT')
     data_inicio = models.DateField('Data de Início da Pesquisa', auto_now=True)
     data_termino = models.DateField('Data de Término da Pesquisa', blank=True, null=True)
+
+
+class EntradaFinanceira(models.Model):
+    STATUS_POSSIVEIS = (
+        ('EM', 'Emitida'),
+        ('SE', 'Solicitada e aguardando emissão'),
+        ('CA', 'Cancelada')
+    )
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
+    numero_nota_fiscal = models.CharField('Número da nota fiscal', max_length=50, default=1)
+    data = models.DateField('Data de entrada da nota', auto_now=True)
+    descricao = models.CharField('Descrição da entrada financeira', max_length=50, default='Sem descrição')
+    valor = models.FloatField('Valor da entrada financeira', default=0)
+    status = models.CharField('Status da entrada financeira', choices=STATUS_POSSIVEIS, max_length=2, default='EM')
+
+
+class SaidaFinanceira(models.Model):
+    STATUS_POSSIVEIS = (
+        ('EM', 'Emitida'),
+        ('SE', 'Solicitada e aguardando emissão'),
+        ('CA', 'Cancelada')
+    )
+    recebedor = models.CharField('Nome do recebedor', max_length=30, default='Nenhum recebedor cadastrado')
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
+    numero_nota_fiscal = models.CharField('Número da nota fiscal', max_length=50, default=1)
+    data = models.DateField('Data de saída da nota', auto_now=True)
+    descricao = models.CharField('Descrição da saída financeira', max_length=50, default='Sem descrição')
+    valor = models.FloatField('Valor da saída financeira', default=0)
+    status = models.CharField('Status da saída financeira', choices=STATUS_POSSIVEIS, max_length=2, default='EM')
