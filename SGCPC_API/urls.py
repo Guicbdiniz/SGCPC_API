@@ -25,7 +25,7 @@ router.register(r'pesquisas', PesquisaViewSet, basename='pesquisas')
 router.register(r'investigadores', InvestigadorViewSet, basename='investigadores')
 router.register(r'equipesdeapoio', EquipeDeApoioViewSet, basename='equipes de apoio')
 router.register(r'entradafinanceira', EntradaFinanceiraViewSet, basename='entradas financeiras')
-router.register(r'saidafinanceira', SaidaFinanceiraViewSet, basename='saidas financeiras')
+router.register(r'saidafinanceira', SaidaFinanceiraViewSet, basename='saídas financeiras')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -30,6 +30,20 @@ class PesquisaSerializer(serializers.ModelSerializer):
         pesquisa = Pesquisa.objects.create(investigador=investigador, equipe_de_apoio=equipe, **validated_data)
         return pesquisa
 
+    def update(self, instance, validated_data):
+        for data in validated_data:
+
+            if data == "investigador":
+                investigador = InvestigadorPrincipal.objects.get_or_create(**validated_data['investigador'])
+                instance.investigador = investigador
+            elif data == 'equipe_de_apoio':
+                equipe = EquipeDeApoio.objects.get_or_create(**validated_data['equipe_de_apoio'])
+                instance.equipe_de_apoio = equipe
+            else:
+                setattr(instance, data, validated_data[data])
+
+        instance.save()
+        return instance
 
 # class PesquisaReadSerializer(PesquisaSerializer):
 #    investigador = InvestigadorPrincipalSerializer(read_only=True)
@@ -41,12 +55,11 @@ class EntradaFinanceiraSerializer(serializers.ModelSerializer):
         model = EntradaFinanceira
         fields = '__all__'
 
-#    def create(self, validated_data):
-#        dados_da_pesquisa = validated_data.pop('pesquisa_id')
-#        pesquisa = Pesquisa.objects.get(id=dados_da_pesquisa)
-#        entrada_financeira = EntradaFinanceira.objects.create(pesquisa=pesquisa, **validated_data)
-#
-#        return entrada_financeira
+    def create(self, validated_data):
+        dados_da_pesquisa = validated_data.pop('pesquisa')
+        entrada_financeira = EntradaFinanceira.objects.create(pesquisa=dados_da_pesquisa, **validated_data)
+
+        return entrada_financeira
 
 
 class EntradaFinanceiraReadSerializer(EntradaFinanceiraSerializer):
