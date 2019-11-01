@@ -61,6 +61,14 @@ class EntradaFinanceiraSerializer(serializers.ModelSerializer):
 
         return entrada_financeira
 
+    def update(self, instance, validated_data):
+        for data in validated_data:
+            if data != 'pesquisa' and data != 'id':
+                setattr(instance, data, validated_data[data])
+
+        instance.save()
+        return instance
+
 
 class EntradaFinanceiraReadSerializer(EntradaFinanceiraSerializer):
     pesquisa = PesquisaSerializer(read_only=True)
@@ -70,6 +78,13 @@ class SaidaFinanceiraSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaidaFinanceira
         fields = '__all__'
+
+    def update(self, instance, validated_data):
+        for data in validated_data:
+            if data != 'pesquisa' and data != 'id':
+                setattr(instance, data, validated_data[data])
+            instance.save()
+            return instance
 
 #    def create(self, validated_data):
 #        dados_da_pesquisa = validated_data.pop('pesquisa_id')

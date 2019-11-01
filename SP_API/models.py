@@ -72,3 +72,10 @@ class SaidaFinanceira(models.Model):
     descricao = models.CharField('Descrição da saída financeira', max_length=50, default='Sem descrição')
     valor = models.FloatField('Valor da saída financeira', default=0)
     status = models.CharField('Status da saída financeira', choices=STATUS_POSSIVEIS, max_length=2, default='EM')
+
+
+class Paciente(models.Model):
+    nome = models.CharField('Nome do paciente', max_length=30, default='Sem nome disponível')
+    cpf = models.BigIntegerField('Cpf do paciente', default='12345678909')
+    telefone = models.CharField('Número de celular do paciente', max_length=20, default='31999999999')
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
