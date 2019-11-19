@@ -1,9 +1,22 @@
+from reportlab.graphics.shapes import Image
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
-from SP_API.models import Pesquisa, InvestigadorPrincipal, EquipeDeApoio, EntradaFinanceira, SaidaFinanceira
+
+from SP_API.funcoes import cria_pagina_pesquisa
+from SP_API.models import Pesquisa, InvestigadorPrincipal, EquipeDeApoio, EntradaFinanceira, SaidaFinanceira, Paciente
 from SP_API.serializers import PesquisaSerializer, InvestigadorPrincipalSerializer, EquipeDeApoioSerializer, \
     EntradaFinanceiraSerializer, SaidaFinanceiraSerializer, EntradaFinanceiraReadSerializer, \
-    SaidaFinanceiraReadSerialzier
+    SaidaFinanceiraReadSerialzier, PacienteSerializer
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch, cm, mm
+
+
+class PacienteViewSet(viewsets.ModelViewSet):
+    queryset = Paciente.objects.all()
+    serializer_class = PacienteSerializer
 
 
 class PesquisaViewSet(viewsets.ModelViewSet):
@@ -45,3 +58,24 @@ class SaidaFinanceiraViewSet(viewsets.ModelViewSet):
 def teste(request, *args, **kwargs):
     print(request.data)
     return "Aee"
+
+
+def gerar_relatorio_de_pesquisa(request):
+
+    buffer = io.BytesIO()
+    modelador_paginas = canvas.Canvas(buffer, pagesize=A4)
+    modelador_paginas.setTitle('Relatório de Pesquisas - Hospital São Francisco')
+
+    pesquisas_cadastradas = Pesquisa.objects.all()
+
+    contador_de_pesquisas = 1
+
+    for pesquisa in pesquisas_cadastradas:
+        cria_pagina_pesquisa(modelador_paginas, pesquisa, contador_de_pesquisas)
+        contador_de_pesquisas += 1
+
+    modelador_paginas.save()
+
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=False, filename='relatório.pdf')

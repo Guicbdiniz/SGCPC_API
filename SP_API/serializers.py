@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from SP_API.models import Pesquisa, InvestigadorPrincipal, EquipeDeApoio, EntradaFinanceira, SaidaFinanceira
+from SP_API.models import Pesquisa, InvestigadorPrincipal, EquipeDeApoio, EntradaFinanceira, SaidaFinanceira, Paciente
 
 
 class InvestigadorPrincipalSerializer(serializers.ModelSerializer):
@@ -96,3 +96,9 @@ class SaidaFinanceiraSerializer(serializers.ModelSerializer):
 
 class SaidaFinanceiraReadSerialzier(SaidaFinanceiraSerializer):
     pesquisa = PesquisaSerializer(read_only=True)
+
+
+class PacienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paciente
+        fields = '__all__'
