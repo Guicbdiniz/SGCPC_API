@@ -54,12 +54,15 @@ class EntradaFinanceira(models.Model):
         ('SE', 'Solicitada e aguardando emissão'),
         ('CA', 'Cancelada')
     )
-    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.PROTECT, null=True)
     numero_nota_fiscal = models.CharField('Número da nota fiscal', max_length=50, default=1)
     data = models.DateField('Data de entrada da nota', auto_now=True)
     descricao = models.CharField('Descrição da entrada financeira', max_length=50, default='Sem descrição')
     valor = models.FloatField('Valor da entrada financeira', default=0)
     status = models.CharField('Status da entrada financeira', choices=STATUS_POSSIVEIS, max_length=2, default='EM')
+
+    def pra_lista(self):
+        return ['Entrada Financeira ', 'ID: ' + str(self.id), 'Valor: ' + str(self.valor), 'Descrição: ' + str(self.descricao)]
 
 
 class SaidaFinanceira(models.Model):
@@ -69,16 +72,19 @@ class SaidaFinanceira(models.Model):
         ('CA', 'Cancelada')
     )
     recebedor = models.CharField('Nome do recebedor', max_length=30, default='Nenhum recebedor cadastrado')
-    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.PROTECT, null=True)
     numero_nota_fiscal = models.CharField('Número da nota fiscal', max_length=50, default=1)
     data = models.DateField('Data de saída da nota', auto_now=True)
     descricao = models.CharField('Descrição da saída financeira', max_length=50, default='Sem descrição')
     valor = models.FloatField('Valor da saída financeira', default=0)
     status = models.CharField('Status da saída financeira', choices=STATUS_POSSIVEIS, max_length=2, default='EM')
 
+    def pra_lista(self):
+        return ['Saida Financeira', 'ID: ' + str(self.id), 'Valor: ' + str(self.valor), 'Descrição: ' + str(self.descricao)]
+
 
 class Paciente(models.Model):
     nome = models.CharField('Nome do paciente', max_length=30, default='Sem nome disponível')
     cpf = models.BigIntegerField('Cpf do paciente', default='12345678909')
     telefone = models.CharField('Número de celular do paciente', max_length=20, default='31999999999')
-    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.DO_NOTHING, null=True)
+    pesquisa = models.ForeignKey(Pesquisa, on_delete=models.SET_NULL, null=True)
